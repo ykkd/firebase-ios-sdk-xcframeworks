@@ -309,15 +309,15 @@ if [[ $latest != $current || $debug ]]; then
         prepare_files_for_distribution "../$distribution"
         echo "Creating source files..."
         generate_sources "../$sources"
-        # # Create test package using local binaries and make sure it builds
-        # generate_swift_package "../$package" "$home/package_template.swift" "../$distribution" $xcframeworks_repo $distribution
-        # echo "Validating..."
-        # (cd ..; swift package dump-package | read pac)
-        # (cd ..; swift build) # TODO: create tests and replace this line with `(cd ..; swift test)`
-        # # Create release package using remote binaries and make sure the Package.swift file is parseable
-        # generate_swift_package "../$package" "$home/package_template.swift" "../$distribution" $xcframeworks_repo ''
-        # echo "Validating..."
-        # (cd ..; swift package dump-package | read pac)
+        # Create test package using local binaries and make sure it builds
+        generate_swift_package "../$package" "$home/package_template.swift" "../$distribution" $xcframeworks_repo $distribution
+        echo "Validating..."
+        (cd ..; swift package dump-package | read pac)
+        (cd ..; swift build) # TODO: create tests and replace this line with `(cd ..; swift test)`
+        # Create release package using remote binaries and make sure the Package.swift file is parseable
+        generate_swift_package "../$package" "$home/package_template.swift" "../$distribution" $xcframeworks_repo ''
+        echo "Validating..."
+        (cd ..; swift package dump-package | read pac)
     )
 
     echo "Moving files to repo..."; cd ..
