@@ -1,5 +1,8 @@
 name: Publish Release
-
+on:
+  push:
+    branches:
+      - 'playground'
 jobs:
   build:
     runs-on: macos-latest
