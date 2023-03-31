@@ -331,8 +331,8 @@ if [[ $latest != $current || $debug ]]; then
     # Skips deploy
     if [[ $skip_release ]]; then echo "Done."; exit 0; fi
 
-    time=(date "+%s")
-    commit_changes "playground/$time"
+    time=$(date "+%s")
+    commit_changes "playground_results/$time"
 
     # Deploy to repository
     # echo "Merging changes to Github..."
