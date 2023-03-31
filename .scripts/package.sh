@@ -50,7 +50,8 @@ create_scratch () {
     scratch=$(mktemp -d -t TemporaryDirectory)
     if [[ $debug ]]; then open $scratch; fi
     # Run cleanup on exit
-    trap "if [[ \$debug ]]; then read -p \"\"; fi; rm -rf \"$scratch\"" EXIT
+    # playground
+    # trap "if [[ \$debug ]]; then read -p \"\"; fi; rm -rf \"$scratch\"" EXIT
 }
 
 rename_frameworks () {
@@ -274,7 +275,7 @@ set -o pipefail
 
 # Repos
 firebase_repo="https://github.com/firebase/firebase-ios-sdk"
-xcframeworks_repo="https://github.com/akaffenberger/firebase-ios-sdk-xcframeworks"
+xcframeworks_repo="https://github.com/ykkd/firebase-ios-sdk-xcframeworks"
 
 # Release versions
 latest=$(latest_release_number $firebase_repo)
@@ -308,15 +309,15 @@ if [[ $latest != $current || $debug ]]; then
         prepare_files_for_distribution "../$distribution"
         echo "Creating source files..."
         generate_sources "../$sources"
-        # Create test package using local binaries and make sure it builds
-        generate_swift_package "../$package" "$home/package_template.swift" "../$distribution" $xcframeworks_repo $distribution
-        echo "Validating..."
-        (cd ..; swift package dump-package | read pac)
-        (cd ..; swift build) # TODO: create tests and replace this line with `(cd ..; swift test)`
-        # Create release package using remote binaries and make sure the Package.swift file is parseable
-        generate_swift_package "../$package" "$home/package_template.swift" "../$distribution" $xcframeworks_repo ''
-        echo "Validating..."
-        (cd ..; swift package dump-package | read pac)
+        # # Create test package using local binaries and make sure it builds
+        # generate_swift_package "../$package" "$home/package_template.swift" "../$distribution" $xcframeworks_repo $distribution
+        # echo "Validating..."
+        # (cd ..; swift package dump-package | read pac)
+        # (cd ..; swift build) # TODO: create tests and replace this line with `(cd ..; swift test)`
+        # # Create release package using remote binaries and make sure the Package.swift file is parseable
+        # generate_swift_package "../$package" "$home/package_template.swift" "../$distribution" $xcframeworks_repo ''
+        # echo "Validating..."
+        # (cd ..; swift package dump-package | read pac)
     )
 
     echo "Moving files to repo..."; cd ..
@@ -330,11 +331,14 @@ if [[ $latest != $current || $debug ]]; then
     # Skips deploy
     if [[ $skip_release ]]; then echo "Done."; exit 0; fi
 
+    time=(date "+%s")
+    commit_changes "playground/$time"
+
     # Deploy to repository
-    echo "Merging changes to Github..."
-    commit_changes "release/$latest"
-    echo "Creating release draft"
-    echo "Release $latest" | gh release create --target "release/$latest" --draft $latest $scratch/dist/*.xcframework.zip
+    # echo "Merging changes to Github..."
+    # commit_changes "release/$latest"
+    # echo "Creating release draft"
+    # echo "Release $latest" | gh release create --target "release/$latest" --draft $latest $scratch/dist/*.xcframework.zip
 else
     echo "$current is up to date."
 fi
